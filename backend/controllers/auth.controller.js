@@ -10,7 +10,7 @@ export const login = async (req, res) => {
         const user = await User.findOne({ username: username });
         const isPasswordCorrect = await bcrypt.compare(password, user?.password || "");
         if (!user || !isPasswordCorrect) {
-            return res.status(400).json({ message: "Invalid username or password" });
+            return res.status(400).json({ error: "Invalid username or password" });
         }
         generateTokenAndSetCookie(res, user._id);
         res.status(200).json({ _id: user._id, username: user.username, email: user.email, profilePicture: user.profilePicture });
@@ -18,7 +18,7 @@ export const login = async (req, res) => {
     } catch (error) {
 
         console.log("Error in login : ", error.message);
-        res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ error: "Internal server error" });
     
     }
 
@@ -28,17 +28,17 @@ export const signup = async (req, res) => {
     try {
         const { fullName, username, email, password, confirmPassword, gender } = req.body;
         if (password !== confirmPassword) {
-            return res.status(400).json({ message: "Passwords do not match" });
+            return res.status(400).json({ error: "Passwords do not match" });
         }
         const user = await User.findOne({ $or: [{ username }, { email }] });
         if (user) {
             if (user.username === username) {
                 // Username is already in use
-                return res.status(400).json({ message: "Username is already in use" });
+                return res.status(400).json({ error: "Username is already in use" });
             }
             if (user.email === email) {
                 // Email is already in use
-                return res.status(400).json({ message: "Email is already in use" });
+                return res.status(400).json({ error: "Email is already in use" });
             }
         }
 
@@ -63,12 +63,12 @@ export const signup = async (req, res) => {
             generateTokenAndSetCookie(res, newUser._id);
             res.status(201).json({ _id: newUser._id, username: newUser.username, email: newUser.email, profilePicture: newUser.profilePicture});
         } else {
-            res.status(400).json({ message: "Invalid user data" });
+            res.status(400).json({ error: "Invalid user data" });
         }
 
     } catch (error) {
         console.log("Error in signup: ", error.message);
-        res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ error: "Internal server error" });
     }
 };
 
@@ -78,6 +78,6 @@ export const logout = async (req, res) => {
         res.status(200).json({ message: "Logged out successfully" });
     } catch (error) {
         console.log("Error in logout: ", error.message);
-        res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ error: "Internal server error" });
     }
 };
