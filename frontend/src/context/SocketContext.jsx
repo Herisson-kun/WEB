@@ -2,8 +2,6 @@ import { createContext, useState, useContext, useEffect } from 'react';
 import { useAuthContext } from './AuthContext.jsx';
 import io from 'socket.io-client';
 
-
-
 export const SocketContext = createContext();
 
 export const useSocketContext = () => {
@@ -18,7 +16,7 @@ export const SocketContextProvider = ({children}) => {
     useEffect(() => {
         if (authUser) {
 
-            const socket = io('http://localhost:9000',
+            const socket = io("https://project-chat-web.onrender.com",
                 {
                     query: {
                         userId: authUser._id
